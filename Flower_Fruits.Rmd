@@ -1,0 +1,44 @@
+---
+title: "Flowering and Fruits presence"
+author: "Nasim Farahani"
+date: "11/9/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load packages
+```{r, message=FALSE}
+library(ggplot2)
+library(cowplot)
+library(dplyr)
+library(moiR)
+```
+
+# Load the data
+```{r}
+flo = read.csv('../data-raw/FlowerFruits.csv', header = TRUE, sep = ";")
+head(flo)
+```
+
+#To delete column X - no clue why it is here
+```{r}
+flo$X = NULL
+```
+
+# Plot boxplot flowering against fruits 
+```{r}
+flows=subset(flo, id != 'IGN' & flowering != 'NaN' & watering != 'W')
+flobox = ggplot(flows, aes(x = fruits, y = flowering, group=fruits, color=id)) +
+  ylab("Flowering Date") + xlab("Fruits Presence") + ggtitle("Flowering vs fruits") +
+  geom_violin() + theme_grey() + scale_x_discrete(limits=c("Yes", "No"))
+#with geom_jitter -> geom_jitter(position=position_jitter(0.2))
+flofi = flobox + guides(color=FALSE)
+```
+
+# Output 
+```{r flofi, echo=FALSE}
+plot(flofi)
+```
